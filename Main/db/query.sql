@@ -1,0 +1,1 @@
+SELECT departments.department_name AS department, 
