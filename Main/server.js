@@ -213,12 +213,9 @@ const db = mysql.createConnection(
             `SELECT DISTINCT title,id FROM role`, (err,role_result) =>{
             if (err) throw err;
             db.query (
-              `SELECT DISTINCT CONCAT(e.first_name," ",e.last_name) AS manager_name,e.id
-              FROM employee
-              LEFT JOIN employee e
-              ON employee.manager_id = e.id
-              WHERE employee.manager_id IS NOT NULL`, (err,manager_result) =>{
+              `SELECT * FROM employee;`, (err, res) =>{
               if (err) throw err;
+              let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.employee_id}));
                 inquirer.prompt([
                 {
                   name: "first_name",
@@ -241,19 +238,18 @@ const db = mysql.createConnection(
                   name: 'manager',
                   type: 'list',
                   message: "Who is the employee's manager?",
-                  choices: () =>
-                  manager_result.map(({ id, first_name, last_name}) => ({ name: first_name + ''+ last_name, value: id})),//make it an array
+                  choices: employees,//make it an array
               }])
-          .then(function (answers) {
-            const managerID = manager_result.filter((manager_result) => manager_result.manager_name === answers.manager)[0].id;
-            const roleID = role_result.filter((role_result) => role_result.title === answers.role)[0].id;
+           .then(function (answers) {
+          //   const managerID = manager_result.filter((manager_result) => manager_result.manager_name === answers.manager)[0].id;
+          //   const roleID = role_result.filter((role_result) => role_result.title === answers.role)[0].id;
             db.query(
               "INSERT INTO employee SET ?",
               { 
                 first_name: answers.first_name,
                 last_name: answers.last_name,
-                role_id: roleID,
-                manager_id: managerID
+                role_id: answers.role,
+                manager_id: answers.manager
               },
               function (err) {
                 if (err) throw err;
