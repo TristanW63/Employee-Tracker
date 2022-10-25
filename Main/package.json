@@ -12,9 +12,8 @@
     "description": "",
     "dependencies": {
       "asciiart-logo": "^0.2.6",
-      "express": "^4.17.1",
       "console.table": "^0.10.0",
-      "mysql2": "^2.2.5",
+      "mysql2": "^2.3.3",
       "inquirer": "8.2.4"
     }
   }
